@@ -159,7 +159,7 @@ export default function App() {
                   to replace this. Or just rely on the assumption that we format it as 'photo.jpg'.
                 */}
                 <img
-                  src="./photo.jpg"
+                  src={`${import.meta.env.BASE_URL}photo.jpg`}
                   alt="邱毓庭帥照/美照"
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                   onError={(e) => {
