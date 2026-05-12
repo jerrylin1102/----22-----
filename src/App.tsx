@@ -15,6 +15,7 @@ export default function App() {
   const [velocity, setVelocity] = useState(0);
   const spinRef = useRef<number | null>(null);
   const velocityRef = useRef(0);
+  const rotationRef = useRef(0);
 
   useEffect(() => {
     setMounted(true);
@@ -28,30 +29,33 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // 物理旋轉邏輯
+  // 保持 velocity 和 rotation 在 ref 中最新
   useEffect(() => {
     velocityRef.current = velocity;
   }, [velocity]);
 
   useEffect(() => {
-    if (velocity === 0) return;
+    rotationRef.current = rotation;
+  }, [rotation]);
 
+  // 主要動畫迴圈
+  useEffect(() => {
     const updateRotation = () => {
-      setRotation((prev) => {
-        const newRotation = (prev + velocityRef.current) % 360;
-        return newRotation;
-      });
+      if (velocityRef.current === 0) {
+        return;
+      }
 
-      setVelocity((prev) => {
-        // 漸進減速，模擬摩擦力
-        const newVelocity = prev * 0.97;
+      // 更新旋轉
+      const newRotation = (rotationRef.current + velocityRef.current) % 360;
+      setRotation(newRotation);
 
-        // 當速度足夠小時停止旋轉
-        if (Math.abs(newVelocity) < 0.1) {
-          return 0;
-        }
-        return newVelocity;
-      });
+      // 減速
+      const newVelocity = velocityRef.current * 0.97;
+      if (Math.abs(newVelocity) < 0.1) {
+        setVelocity(0);
+      } else {
+        setVelocity(newVelocity);
+      }
 
       spinRef.current = requestAnimationFrame(updateRotation);
     };
