@@ -8,6 +8,7 @@ import { motion } from 'motion/react';
 import Marquee from 'react-fast-marquee';
 import confetti from 'canvas-confetti';
 import { PartyPopper, Sparkles, Star, Music, Heart, Gift } from 'lucide-react';
+import photoImg from '../public/photo.jpg';
 
 export default function App() {
   const [mounted, setMounted] = useState(false);
@@ -158,9 +159,9 @@ export default function App() {
                   In AI Studio, you can drag your photo into the file explorer and name it photo.jpg
                   to replace this. Or just rely on the assumption that we format it as 'photo.jpg'.
                 */}
-                <img 
-                  src="/photo.jpg" 
-                  alt="邱毓庭帥照/美照" 
+                <img
+                  src={photoImg}
+                  alt="邱毓庭帥照/美照"
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                   onError={(e) => {
                     // Fallback visually if image not found
