@@ -201,11 +201,12 @@ export default function App() {
             <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-500 to-blue-600 rounded-3xl transform -rotate-3 scale-105 group-hover:-rotate-6 transition-transform duration-300 opacity-70"></div>
             
             <div
-              className="relative bg-black p-2 rounded-3xl z-10 animate-float border-4 border-transparent bg-clip-padding cursor-pointer select-none transition-transform"
+              className="relative bg-black p-3 rounded-3xl z-10 animate-float border-8 border-transparent bg-clip-padding cursor-pointer select-none transition-transform"
               style={{
-                borderImage: 'linear-gradient(to right, #00ffff, #ff00de) 1',
+                borderImage: 'linear-gradient(45deg, #00ffff, #ff00de, #00ffff) 1',
                 transform: `rotate(${rotation}deg)`,
-                transformOrigin: 'center'
+                transformOrigin: 'center',
+                boxShadow: `0 0 30px rgba(0, 255, 255, ${Math.abs(Math.sin(rotation * Math.PI / 180)) * 0.8}), 0 0 40px rgba(255, 0, 222, ${Math.abs(Math.cos(rotation * Math.PI / 180)) * 0.8})`
               }}
               onClick={handlePhotoClick}
               role="button"
