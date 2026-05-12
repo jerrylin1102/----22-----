@@ -11,9 +11,6 @@ import { PartyPopper, Sparkles, Star, Music, Heart, Gift } from 'lucide-react';
 
 export default function App() {
   const [mounted, setMounted] = useState(false);
-  const [rotation, setRotation] = useState(0);
-  const [velocity, setVelocity] = useState(0);
-  const spinRef = useRef<number | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -26,39 +23,6 @@ export default function App() {
 
     return () => clearInterval(interval);
   }, []);
-
-  // 動畫迴圈 - 每當 velocity 改變時，更新旋轉
-  useEffect(() => {
-    if (velocity === 0) {
-      return;
-    }
-
-    let isMounted = true;
-
-    const animate = () => {
-      if (!isMounted) return;
-
-      setRotation((prevRotation) => (prevRotation + velocity) % 360);
-      setVelocity((prevVelocity) => {
-        const newVelocity = prevVelocity * 0.97;
-        if (Math.abs(newVelocity) < 0.1) {
-          return 0;
-        }
-        return newVelocity;
-      });
-
-      spinRef.current = requestAnimationFrame(animate);
-    };
-
-    spinRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      isMounted = false;
-      if (spinRef.current !== null) {
-        cancelAnimationFrame(spinRef.current);
-      }
-    };
-  }, [velocity]);
 
   const triggerConfetti = () => {
     const duration = 3 * 1000;
@@ -102,15 +66,7 @@ export default function App() {
   };
 
   const handlePhotoClick = () => {
-    // 基礎旋轉速度 (度數/幀)
-    const baseSpeed = 15;
-
-    // 每次點擊增加速度
-    const newVelocity = baseSpeed + Math.random() * 10;
-
-    setVelocity(newVelocity);
-
-    // 觸發一個慶祝效果
+    // 觸發慶祝效果
     randomConfetti();
   };
 
@@ -201,12 +157,7 @@ export default function App() {
             <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-500 to-blue-600 rounded-3xl transform -rotate-3 scale-105 group-hover:-rotate-6 transition-transform duration-300 opacity-70"></div>
             
             <div
-              className="relative bg-black p-3 rounded-3xl z-10 animate-float border-8 cursor-pointer select-none transition-transform"
-              style={{
-                borderColor: `hsl(${rotation % 360}, 100%, 50%)`,
-                transformOrigin: 'center',
-                boxShadow: `0 0 30px hsl(${rotation % 360}, 100%, 50%, 0.5)`
-              }}
+              className="relative bg-black p-3 rounded-3xl z-10 animate-float border-8 border-cyan-500 cursor-pointer select-none transition-transform"
               onClick={handlePhotoClick}
               role="button"
               tabIndex={0}
@@ -216,7 +167,7 @@ export default function App() {
                 }
               }}
             >
-              <div className="relative rounded-2xl w-[280px] h-[350px] md:w-[400px] md:h-[500px] bg-zinc-900 flex items-center justify-center border-2 border-zinc-800" style={{ overflow: 'visible' }}>
+              <div className="relative overflow-hidden rounded-2xl w-[280px] h-[350px] md:w-[400px] md:h-[500px] bg-zinc-900 flex items-center justify-center border-2 border-zinc-800">
                 {/*
                   Note: Using a placeholder visually if the image path isn't perfectly mapped.
                   In AI Studio, you can drag your photo into the file explorer and name it photo.jpg
@@ -226,10 +177,6 @@ export default function App() {
                   src={`${import.meta.env.BASE_URL}photo.jpg`}
                   alt="邱毓庭帥照/美照"
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-110 pointer-events-none"
-                  style={{
-                    transform: `rotate(${rotation}deg)`,
-                    transformOrigin: 'center'
-                  }}
                   onError={(e) => {
                     // Fallback visually if image not found
                     e.currentTarget.style.display = 'none';
