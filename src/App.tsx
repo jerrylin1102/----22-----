@@ -38,13 +38,10 @@ export default function App() {
     const animate = () => {
       if (!isMounted) return;
 
-      console.log('Animating with velocity:', velocity);
-
       setRotation((prevRotation) => (prevRotation + velocity) % 360);
       setVelocity((prevVelocity) => {
         const newVelocity = prevVelocity * 0.97;
         if (Math.abs(newVelocity) < 0.1) {
-          console.log('Stopping rotation');
           return 0;
         }
         return newVelocity;
@@ -111,7 +108,6 @@ export default function App() {
     // 每次點擊增加速度
     const newVelocity = baseSpeed + Math.random() * 10;
 
-    console.log('Photo clicked! Setting velocity to:', newVelocity);
     setVelocity(newVelocity);
 
     // 觸發一個慶祝效果
