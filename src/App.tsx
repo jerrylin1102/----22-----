@@ -11,6 +11,7 @@ import { PartyPopper, Sparkles, Star, Music, Heart, Gift } from 'lucide-react';
 
 export default function App() {
   const [mounted, setMounted] = useState(false);
+  // GitHub Pages deployment fix
 
   useEffect(() => {
     setMounted(true);
