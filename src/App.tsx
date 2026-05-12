@@ -41,6 +41,7 @@ export default function App() {
   // 主要動畫迴圈
   useEffect(() => {
     let isRunning = true;
+    let frameCount = 0;
 
     const updateRotation = () => {
       if (!isRunning) return;
@@ -48,6 +49,11 @@ export default function App() {
       const currentVelocity = velocityRef.current;
 
       if (currentVelocity !== 0) {
+        frameCount++;
+        if (frameCount % 10 === 0) {
+          console.log('Rotating with velocity:', currentVelocity, 'rotation:', rotationRef.current);
+        }
+
         // 更新旋轉
         const newRotation = (rotationRef.current + currentVelocity) % 360;
         setRotation(newRotation);
@@ -55,6 +61,7 @@ export default function App() {
         // 減速
         const newVelocity = currentVelocity * 0.97;
         if (Math.abs(newVelocity) < 0.1) {
+          console.log('Stopping rotation');
           setVelocity(0);
         } else {
           setVelocity(newVelocity);
@@ -122,6 +129,7 @@ export default function App() {
     // 每次點擊增加速度
     const newVelocity = baseSpeed + Math.random() * 10;
 
+    console.log('Photo clicked! Setting velocity to:', newVelocity);
     setVelocity(newVelocity);
 
     // 觸發一個慶祝效果
