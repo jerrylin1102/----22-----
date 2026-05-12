@@ -216,7 +216,7 @@ export default function App() {
                 }
               }}
             >
-              <div className="relative overflow-hidden rounded-2xl w-[280px] h-[350px] md:w-[400px] md:h-[500px] bg-zinc-900 flex items-center justify-center border-2 border-zinc-800">
+              <div className="relative rounded-2xl w-[280px] h-[350px] md:w-[400px] md:h-[500px] bg-zinc-900 flex items-center justify-center border-2 border-zinc-800" style={{ overflow: 'visible' }}>
                 {/*
                   Note: Using a placeholder visually if the image path isn't perfectly mapped.
                   In AI Studio, you can drag your photo into the file explorer and name it photo.jpg
