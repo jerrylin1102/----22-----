@@ -12,9 +12,9 @@ import { PartyPopper, Sparkles, Star, Music, Heart, Gift } from 'lucide-react';
 export default function App() {
   const [mounted, setMounted] = useState(false);
   const [rotation, setRotation] = useState(0);
-  const [isSpinning, setIsSpinning] = useState(false);
   const [velocity, setVelocity] = useState(0);
   const spinRef = useRef<number | null>(null);
+  const velocityRef = useRef(0);
 
   useEffect(() => {
     setMounted(true);
@@ -30,11 +30,15 @@ export default function App() {
 
   // 物理旋轉邏輯
   useEffect(() => {
-    if (!isSpinning) return;
+    velocityRef.current = velocity;
+  }, [velocity]);
+
+  useEffect(() => {
+    if (velocity === 0) return;
 
     const updateRotation = () => {
       setRotation((prev) => {
-        const newRotation = (prev + velocity) % 360;
+        const newRotation = (prev + velocityRef.current) % 360;
         return newRotation;
       });
 
@@ -44,7 +48,6 @@ export default function App() {
 
         // 當速度足夠小時停止旋轉
         if (Math.abs(newVelocity) < 0.1) {
-          setIsSpinning(false);
           return 0;
         }
         return newVelocity;
@@ -60,7 +63,7 @@ export default function App() {
         cancelAnimationFrame(spinRef.current);
       }
     };
-  }, [isSpinning, velocity]);
+  }, []);
 
   const triggerConfetti = () => {
     const duration = 3 * 1000;
@@ -111,7 +114,6 @@ export default function App() {
     const newVelocity = baseSpeed + Math.random() * 10;
 
     setVelocity(newVelocity);
-    setIsSpinning(true);
 
     // 觸發一個慶祝效果
     randomConfetti();
