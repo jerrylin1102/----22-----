@@ -40,21 +40,25 @@ export default function App() {
 
   // 主要動畫迴圈
   useEffect(() => {
+    let isRunning = true;
+
     const updateRotation = () => {
-      if (velocityRef.current === 0) {
-        return;
-      }
+      if (!isRunning) return;
 
-      // 更新旋轉
-      const newRotation = (rotationRef.current + velocityRef.current) % 360;
-      setRotation(newRotation);
+      const currentVelocity = velocityRef.current;
 
-      // 減速
-      const newVelocity = velocityRef.current * 0.97;
-      if (Math.abs(newVelocity) < 0.1) {
-        setVelocity(0);
-      } else {
-        setVelocity(newVelocity);
+      if (currentVelocity !== 0) {
+        // 更新旋轉
+        const newRotation = (rotationRef.current + currentVelocity) % 360;
+        setRotation(newRotation);
+
+        // 減速
+        const newVelocity = currentVelocity * 0.97;
+        if (Math.abs(newVelocity) < 0.1) {
+          setVelocity(0);
+        } else {
+          setVelocity(newVelocity);
+        }
       }
 
       spinRef.current = requestAnimationFrame(updateRotation);
@@ -63,6 +67,7 @@ export default function App() {
     spinRef.current = requestAnimationFrame(updateRotation);
 
     return () => {
+      isRunning = false;
       if (spinRef.current !== null) {
         cancelAnimationFrame(spinRef.current);
       }
