@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-neon-pulse: neon-pulse 1.5s ease-in-out infinite alternate;
+  --animate-gradient-x: gradient-x 3s ease infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-spin-slow: spin 8s linear infinite;
+
+  @keyframes neon-pulse {
+    from {
+      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 40px #ff00de, 0 0 80px #ff00de;
+    }
+    to {
+      text-shadow: 0 0 2.5px #fff, 0 0 5px #fff, 0 0 10px #ff00de, 0 0 20px #ff00de, 0 0 40px #ff00de;
+    }
+  }
+
+  @keyframes gradient-x {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+}
+
+body {
+  background-color: #050505;
+  color: white;
+  overflow-x: hidden;
+}
+
+.text-glow {
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+.neon-text-pink {
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 40px #ff00de, 0 0 80px #ff00de;
+}
+
+.neon-text-cyan {
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 80px #00ffff;
+}
+
+.neon-text-yellow {
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #fffc00, 0 0 40px #fffc00, 0 0 80px #fffc00;
+}
+
+.bg-gradient-animated {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient-x 15s ease infinite;
+}
+
+/* Custom hide scrollbar */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
