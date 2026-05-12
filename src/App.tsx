@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'motion/react';
 import Marquee from 'react-fast-marquee';
 import confetti from 'canvas-confetti';
@@ -11,19 +11,56 @@ import { PartyPopper, Sparkles, Star, Music, Heart, Gift } from 'lucide-react';
 
 export default function App() {
   const [mounted, setMounted] = useState(false);
-  // GitHub Pages deployment fix
+  const [rotation, setRotation] = useState(0);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [velocity, setVelocity] = useState(0);
+  const spinRef = useRef<number | null>(null);
 
   useEffect(() => {
     setMounted(true);
     triggerConfetti();
-    
+
     // Continuous random confetti
     const interval = setInterval(() => {
       randomConfetti();
     }, 3000);
-    
+
     return () => clearInterval(interval);
   }, []);
+
+  // 物理旋轉邏輯
+  useEffect(() => {
+    if (!isSpinning) return;
+
+    const updateRotation = () => {
+      setRotation((prev) => {
+        const newRotation = (prev + velocity) % 360;
+        return newRotation;
+      });
+
+      setVelocity((prev) => {
+        // 漸進減速，模擬摩擦力
+        const newVelocity = prev * 0.97;
+
+        // 當速度足夠小時停止旋轉
+        if (Math.abs(newVelocity) < 0.1) {
+          setIsSpinning(false);
+          return 0;
+        }
+        return newVelocity;
+      });
+
+      spinRef.current = requestAnimationFrame(updateRotation);
+    };
+
+    spinRef.current = requestAnimationFrame(updateRotation);
+
+    return () => {
+      if (spinRef.current !== null) {
+        cancelAnimationFrame(spinRef.current);
+      }
+    };
+  }, [isSpinning, velocity]);
 
   const triggerConfetti = () => {
     const duration = 3 * 1000;
@@ -64,6 +101,20 @@ export default function App() {
       colors: ['#ff00de', '#00ffff', '#fffc00', '#ffffff'],
       disableForReducedMotion: true
     });
+  };
+
+  const handlePhotoClick = () => {
+    // 基礎旋轉速度 (度數/幀)
+    const baseSpeed = 15;
+
+    // 每次點擊增加速度
+    const newVelocity = baseSpeed + Math.random() * 10;
+
+    setVelocity(newVelocity);
+    setIsSpinning(true);
+
+    // 觸發一個慶祝效果
+    randomConfetti();
   };
 
   const letters = "邱毓庭".split('');
@@ -152,9 +203,24 @@ export default function App() {
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-400 rounded-3xl transform rotate-3 scale-105 group-hover:rotate-6 transition-transform duration-300 opacity-70 animate-pulse"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-500 to-blue-600 rounded-3xl transform -rotate-3 scale-105 group-hover:-rotate-6 transition-transform duration-300 opacity-70"></div>
             
-            <div className="relative bg-black p-2 rounded-3xl z-10 animate-float border-4 border-transparent bg-clip-padding" style={{ borderImage: 'linear-gradient(to right, #00ffff, #ff00de) 1' }}>
+            <div
+              className="relative bg-black p-2 rounded-3xl z-10 animate-float border-4 border-transparent bg-clip-padding cursor-pointer select-none transition-transform"
+              style={{
+                borderImage: 'linear-gradient(to right, #00ffff, #ff00de) 1',
+                transform: `rotate(${rotation}deg)`,
+                transformOrigin: 'center'
+              }}
+              onClick={handlePhotoClick}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handlePhotoClick();
+                }
+              }}
+            >
               <div className="relative overflow-hidden rounded-2xl w-[280px] h-[350px] md:w-[400px] md:h-[500px] bg-zinc-900 flex items-center justify-center border-2 border-zinc-800">
-                {/* 
+                {/*
                   Note: Using a placeholder visually if the image path isn't perfectly mapped.
                   In AI Studio, you can drag your photo into the file explorer and name it photo.jpg
                   to replace this. Or just rely on the assumption that we format it as 'photo.jpg'.
@@ -162,7 +228,7 @@ export default function App() {
                 <img
                   src={`${import.meta.env.BASE_URL}photo.jpg`}
                   alt="邱毓庭帥照/美照"
-                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-110 pointer-events-none"
                   onError={(e) => {
                     // Fallback visually if image not found
                     e.currentTarget.style.display = 'none';
