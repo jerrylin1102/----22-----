@@ -14,8 +14,6 @@ export default function App() {
   const [rotation, setRotation] = useState(0);
   const [velocity, setVelocity] = useState(0);
   const spinRef = useRef<number | null>(null);
-  const velocityRef = useRef(0);
-  const rotationRef = useRef(0);
 
   useEffect(() => {
     setMounted(true);
@@ -29,57 +27,41 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // 保持 velocity 和 rotation 在 ref 中最新
+  // 動畫迴圈 - 每當 velocity 改變時，更新旋轉
   useEffect(() => {
-    velocityRef.current = velocity;
-  }, [velocity]);
+    if (velocity === 0) {
+      return;
+    }
 
-  useEffect(() => {
-    rotationRef.current = rotation;
-  }, [rotation]);
+    let isMounted = true;
 
-  // 主要動畫迴圈
-  useEffect(() => {
-    let isRunning = true;
-    let frameCount = 0;
+    const animate = () => {
+      if (!isMounted) return;
 
-    const updateRotation = () => {
-      if (!isRunning) return;
+      console.log('Animating with velocity:', velocity);
 
-      const currentVelocity = velocityRef.current;
-
-      if (currentVelocity !== 0) {
-        frameCount++;
-        if (frameCount % 10 === 0) {
-          console.log('Rotating with velocity:', currentVelocity, 'rotation:', rotationRef.current);
-        }
-
-        // 更新旋轉
-        const newRotation = (rotationRef.current + currentVelocity) % 360;
-        setRotation(newRotation);
-
-        // 減速
-        const newVelocity = currentVelocity * 0.97;
+      setRotation((prevRotation) => (prevRotation + velocity) % 360);
+      setVelocity((prevVelocity) => {
+        const newVelocity = prevVelocity * 0.97;
         if (Math.abs(newVelocity) < 0.1) {
           console.log('Stopping rotation');
-          setVelocity(0);
-        } else {
-          setVelocity(newVelocity);
+          return 0;
         }
-      }
+        return newVelocity;
+      });
 
-      spinRef.current = requestAnimationFrame(updateRotation);
+      spinRef.current = requestAnimationFrame(animate);
     };
 
-    spinRef.current = requestAnimationFrame(updateRotation);
+    spinRef.current = requestAnimationFrame(animate);
 
     return () => {
-      isRunning = false;
+      isMounted = false;
       if (spinRef.current !== null) {
         cancelAnimationFrame(spinRef.current);
       }
     };
-  }, []);
+  }, [velocity]);
 
   const triggerConfetti = () => {
     const duration = 3 * 1000;
