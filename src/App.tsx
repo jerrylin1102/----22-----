@@ -204,7 +204,6 @@ export default function App() {
               className="relative bg-black p-3 rounded-3xl z-10 animate-float border-8 cursor-pointer select-none transition-transform"
               style={{
                 borderColor: `hsl(${rotation % 360}, 100%, 50%)`,
-                transform: `rotate(${rotation}deg)`,
                 transformOrigin: 'center',
                 boxShadow: `0 0 30px hsl(${rotation % 360}, 100%, 50%, 0.5)`
               }}
@@ -227,6 +226,10 @@ export default function App() {
                   src={`${import.meta.env.BASE_URL}photo.jpg`}
                   alt="邱毓庭帥照/美照"
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-110 pointer-events-none"
+                  style={{
+                    transform: `rotate(${rotation}deg)`,
+                    transformOrigin: 'center'
+                  }}
                   onError={(e) => {
                     // Fallback visually if image not found
                     e.currentTarget.style.display = 'none';
